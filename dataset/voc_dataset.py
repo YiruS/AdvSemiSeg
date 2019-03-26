@@ -22,7 +22,7 @@ class VOCDataSet(data.Dataset):
         self.is_mirror = mirror
         self.img_ids = [i_id.strip() for i_id in open(list_path)]
         if not max_iters==None:
-	        self.img_ids = self.img_ids * int(np.ceil(float(max_iters) / len(self.img_ids)))
+            self.img_ids = self.img_ids * int(np.ceil(float(max_iters) / len(self.img_ids)))
         self.files = []
         # for split in ["train", "trainval", "val"]:
         for name in self.img_ids:
@@ -194,13 +194,15 @@ class VOCDataTestSet(data.Dataset):
 
 
 if __name__ == '__main__':
-    dst = VOCDataSet("./data", is_transform=True)
-    trainloader = data.DataLoader(dst, batch_size=4)
+    dst = VOCDataSet("VOC2012", "voc_list/train_aug.txt")
+    trainloader = data.DataLoader(dst, batch_size=1)
     for i, data in enumerate(trainloader):
-        imgs, labels = data
+        imgs, labels, size, name = data
         if i == 0:
             img = torchvision.utils.make_grid(imgs).numpy()
             img = np.transpose(img, (1, 2, 0))
             img = img[:, :, ::-1]
-            plt.imshow(img)
+            # plt.imshow(img)
+            labels = np.squeeze(labels)
+            plt.imshow(labels)
             plt.show()
