@@ -60,7 +60,7 @@ LAMBDA_SEMI=0.1
 MASK_T=0.2
 
 LAMBDA_SEMI_ADV=0.001
-SEMI_START_ADV=0
+SEMI_START_ADV= 0
 D_REMAIN=True
 
 
@@ -404,11 +404,11 @@ def main():
             images, labels, _, _ = batch
             images = Variable(images).cuda(args.gpu)
             ignore_mask = (labels.numpy() == 255)
-            pred = interp(model(images))
+            pred = interp(model(images)) # [5,21,41,41] -> [5, 21, 321, 321]
 
             loss_seg = loss_calc(pred, labels, args.gpu)
 
-            D_out = interp(model_D(F.softmax(pred)))
+            D_out = interp(model_D(F.softmax(pred))) # [5, 1, 10, 10] -> [5, 1, 321, 321]
 
             loss_adv_pred = bce_loss(D_out, make_D_label(gt_label, ignore_mask))
 
@@ -433,8 +433,14 @@ def main():
             pred = pred.detach()
 
             if args.D_remain:
-                pred = torch.cat((pred, pred_remain), 0)
-                ignore_mask = np.concatenate((ignore_mask,ignore_mask_remain), axis = 0)
+                try:
+                    pred_remain
+                    pred = torch.cat((pred, pred_remain), 0)
+                    ignore_mask = np.concatenate((ignore_mask, ignore_mask_remain), axis=0)
+                except NameError:
+                    print("No pred_remain during training D")
+                # pred = torch.cat((pred, pred_remain), 0)
+                # ignore_mask = np.concatenate((ignore_mask,ignore_mask_remain), axis = 0)
 
             D_out = interp(model_D(F.softmax(pred)))
             loss_D = bce_loss(D_out, make_D_label(pred_label, ignore_mask))

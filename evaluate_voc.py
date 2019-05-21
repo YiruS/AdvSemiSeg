@@ -215,8 +215,10 @@ def main():
             print('%d processd'%(index))
         image, label, size, name = batch
         size = size[0].numpy()
-        output = model(Variable(image, volatile=True).cuda(gpu0))
-        output = interp(output).cpu().data[0].numpy()
+        with torch.no_grad():
+            #output = model(Variable(image, volatile=True).cuda(gpu0))
+            output = model(Variable(image).cuda(gpu0))
+            output = interp(output).cpu().data[0].numpy()
 
         output = output[:,:size[0],:size[1]]
         gt = np.asarray(label[0].numpy()[:size[0],:size[1]], dtype=np.int)
