@@ -1,0 +1,37 @@
+===== Shape Statistics =====
+#Airplane = 341
+#Bag = 14
+#Cap = 11
+#Car = 158
+#Chair = 704
+#Earphone = 14
+#Guitar = 159
+#Knife = 80
+#Lamp = 286
+#Laptop = 83
+#Motorbike = 51
+#Mug = 38
+#Pistol = 44
+#Rocket = 12
+#Skateboard = 31
+#Table = 848
+2874
+eval mIoU of Airplane:	 0.796400
+eval mIoU of Bag:	 0.736116
+eval mIoU of Cap:	 0.661491
+eval mIoU of Car:	 0.682402
+eval mIoU of Chair:	 0.862819
+eval mIoU of Earphone:	 0.482288
+eval mIoU of Guitar:	 0.893132
+eval mIoU of Knife:	 0.777334
+eval mIoU of Lamp:	 0.762155
+eval mIoU of Laptop:	 0.937823
+eval mIoU of Motorbike:	 0.641914
+eval mIoU of Mug:	 0.896394
+eval mIoU of Pistol:	 0.777558
+eval mIoU of Rocket:	 0.390927
+eval mIoU of Skateboard:	 0.641170
+eval mIoU of Table:	 0.769201
+eval mean mIoU: 0.731820
+eval mean mIoU (all shapes): 0.796459
+
