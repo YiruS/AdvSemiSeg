@@ -6,6 +6,7 @@ import sys
 import pickle
 import argparse
 import numpy as np
+from itertools import zip_longest
 
 import torch
 import torch.nn as nn
@@ -23,7 +24,8 @@ from models.pointnet import PointNetSeg
 from models.discriminator import ConvDiscNet
 
 from utils.loss import loss_calc, loss_bce
-from utils.utils_train import lr_poly, adjust_learning_rate, adjust_learning_rate_D, one_hot, fastprint
+from utils.utils_train import fastprint, make_D_label
+from utils.utils_train import lr_poly, adjust_learning_rate, adjust_learning_rate_D, one_hot
 from utils.utils_train import create_dataset, create_GT_dataset, create_dataloader, create_model
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +49,7 @@ parser.add_argument("--learning-rate", dest="lr_G", type=float, default=1e-4,
                     help="Base learning rate for training with polynomial decay.")
 parser.add_argument("--learning-rate-D", dest="lr_D", type=float, default=1e-4,
                     help="Base learning rate for discriminator.")
-parser.add_argument("--lambda-adv-pred", dest="lambda_adv_pred", type=float, default=0.01,
+parser.add_argument("--lambda-adv", dest="lambda_adv", type=float, default=0.01,
                     help="lambda_adv for adversarial training.")
 parser.add_argument("--lambda-semi", dest="labmda_semi", type=float, default=0.1,
                     help="lambda_semi for adversarial training.")
@@ -77,8 +79,6 @@ parser.add_argument("--random-mirror", action="store_true",
                     help="Whether to randomly mirror the inputs during the training.")
 parser.add_argument("--random-scale", action="store_true",
                     help="Whether to randomly scale the inputs during the training.")
-# parser.add_argument("--random-seed", type=int, default=RANDOM_SEED,
-#                     help="Random seed to have reproducible results.")
 parser.add_argument("--restore-from-D", dest="restore_from_D", type=str, default=None,
                     help="Where restore model parameters from.")
 parser.add_argument("--save-pred-every", dest="save_pred_every", type=int, default=2,
@@ -123,7 +123,7 @@ SNAPSHOT_DIR = opts.snapshot_dir
 WEIGHT_DECAY = opts.weight_decay
 
 LEARNING_RATE_D = opts.lr_D
-LAMBDA_ADV_PRED = opts.lambda_adv_pred
+LAMBDA_ADV = opts.lambda_adv
 
 PARTIAL_DATA = opts.partial_data
 
@@ -242,8 +242,8 @@ def train(opts):
 
     i_iter = 0
     for epoch in np.arange(NUM_EPOCHS):
-        loss_seg_value = 0
-        loss_adv_pred_value = 0
+        loss_ce_value = 0
+        loss_adv_value = 0
         loss_D_value = 0
         loss_semi_value = 0
         loss_semi_adv_value = 0
@@ -275,19 +275,30 @@ def train(opts):
                                          cls_gt.to(device), \
                                          seg_gt.to(device)
                 pred = model_G(points, cls_gt)
-                loss_seg = loss_calc(pred, seg_gt, device, mask = False)
+                # loss_ce
+                loss_ce = loss_calc(pred, seg_gt, device, mask = False)
+                # loss_adv
+                D_out = model_D(F.softmax(pred, dim=2))
+                ignore_mask = np.zeros(seg_gt.shape).astype(np.bool)
+                loss_adv = loss_bce(D_out, make_D_label(gt_label, ignore_mask, device), device)
+                loss_seg = loss_ce + LAMBDA_ADV*loss_adv
                 loss_seg.backward()
-                loss_seg_value += loss_seg.item()
-            fastprint('[%d/%d] SEG loss: %f' %
+                loss_ce_value += loss_ce.item()
+                loss_adv_value += loss_adv.item()
+
+            fastprint('[%d/%d] CE loss: %.3f, ADV loss: %.3f' %
                       (epoch,
                        NUM_EPOCHS,
-                       loss_seg_value)
+                       loss_ce_value,
+                       loss_adv_value)
                       )
         elif epoch >= 10 and epoch <=19: # only train discriminator
             for i, mini_batch in enumerate(trainloader):
                 # don't accumulate grads in G
                 for param in model_G.parameters():
                     param.requires_grad = False
+                for param in model_D.parameters():
+                    param.requires_grad = True
 
                 points, cls_gt, seg_gt = mini_batch
                 points, cls_gt, seg_gt = Variable(points).float(), \
@@ -296,11 +307,88 @@ def train(opts):
                 points, cls_gt, seg_gt = points.to(device), \
                                          cls_gt.to(device), \
                                          seg_gt.to(device)
+
+                ignore_mask_gt = np.zeros(seg_gt.shape).astype(np.bool)
+                D_gt_v = Variable(one_hot(seg_gt, NUM_SEG_CLASSES)).float().to(device)
+                D_out = model_D(D_gt_v)
+                loss_D_gt = loss_bce(D_out, make_D_label(
+                    gt_label,
+                    ignore_mask_gt,
+                    device), device)
+
+                ignore_mask = np.zeros(seg_gt.shape).astype(np.bool)
                 pred = model_G(points, cls_gt)
                 pred = pred.detach()
                 D_out = model_D(F.softmax(pred, dim=2))
-                loss_D = loss_bce(D_out, make_D_label(pred_label, ignore_mask, device), device)
+                loss_D_pred = loss_bce(D_out, make_D_label(
+                    pred_label,
+                    ignore_mask,
+                    device), device)
+                loss_D = loss_D_gt + loss_D_pred
+                loss_D.backward()
+                loss_D_value += loss_D.item()
+        else: # start unlabeled data
+            for i, mini_batch in enumerate(trainloader_remain):
+                # don't accumulate grads in D
+                for param in model_D.parameters():
+                    param.requires_grad = False
 
+                # only access to img
+                points, cls, _ = mini_batch
+                points, cls = Variable(points).float(), Variable(cls).float()
+                points, cls = points.to(device), cls.to(device)
+
+                pred = model_G(points, cls)  # BxNxC
+                pred_remain = pred.detach()
+
+                D_out = model_D(F.softmax(pred, dim=2))
+                D_out_sigmoid = torch.sigmoid(D_out).data.cpu().numpy()  # BxN
+                ignore_mask_remain = np.zeros(D_out_sigmoid.shape).astype(np.bool)  # Bx2048
+
+                ### semi_adv ###
+                loss_semi_adv = LAMBDA_SEMI_ADV * loss_bce(D_out, make_D_label(
+                        gt_label,
+                        ignore_mask_remain,
+                        device), device)
+
+                ### semi ###
+                semi_ignore_mask = (D_out_sigmoid < MASK_T)
+                semi_gt = pred.data.cpu().numpy().argmax(axis=2)
+                semi_gt[semi_ignore_mask] = 999
+
+                semi_ratio = 1.0 - float(semi_ignore_mask.sum()) / semi_ignore_mask.size
+                print('semi ratio: {:.4f}'.format(semi_ratio))
+
+                if semi_ratio == 0.0:
+                    loss_semi_value += 0
+                    raise ValueError("Semi ratio == 0!")
+                else:
+                    semi_gt = torch.FloatTensor(semi_gt)
+                    loss_semi = LAMBDA_SEMI * loss_calc(pred, semi_gt, device, mask=True)
+                    loss_semi += loss_semi_adv
+                    loss_semi.backward()
+                    loss_semi_adv_value += loss_semi_adv.item()
+                    loss_semi_value += loss_semi.item()
+
+
+
+                #
+                # # trick here, odd for gt, even for pred (assume shuffle=True)
+                # if i % 2 == 0: # train with gt
+                #     ignore_mask_gt = np.zeros(seg_gt.shape).astype(np.bool)
+                #     D_gt_v = Variable(one_hot(seg_gt, NUM_SEG_CLASSES)).float().to(device)
+                #     D_out = model_D(D_gt_v)
+                #     loss_D = loss_bce(D_out, make_D_label(gt_label, ignore_mask_gt, device), device)
+                #     loss_D.backward()
+                #     loss_D_value += loss_D.item()
+                # else: # train with pred
+                #     ignore_mask = np.zeros(seg_gt.shape).astype(np.bool)
+                #     pred = model_G(points, cls_gt)
+                #     pred = pred.detach()
+                #     D_out = model_D(F.softmax(pred, dim=2))
+                #     loss_D = loss_bce(D_out, make_D_label(pred_label, ignore_mask, device), device)
+                #     loss_D.backward()
+                #     loss_D_value += loss_D.item()
 
 if __name__ == '__main__':
     main()

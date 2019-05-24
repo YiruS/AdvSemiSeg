@@ -3,6 +3,7 @@ import sys
 
 import numpy as np
 import torch
+from torch.autograd import Variable
 
 file_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append("%s/.." % file_path)
@@ -31,6 +32,11 @@ def adjust_learning_rate_D(optimizer, i_iter, learning_rate_D, num_steps, power)
     optimizer.param_groups[0]['lr'] = lr
     if len(optimizer.param_groups) > 1 :
         optimizer.param_groups[1]['lr'] = lr * 10
+
+def make_D_label(label, label_shape, device):
+    D_label = np.ones(label_shape.shape)*label
+    D_label = Variable(torch.tensor(D_label, dtype=torch.float)).to(device)
+    return D_label
 
 def one_hot(label, num_classes):
     label = label.numpy()
