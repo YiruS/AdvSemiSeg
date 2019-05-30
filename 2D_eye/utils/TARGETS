@@ -1,0 +1,69 @@
+python_library(
+    name = "dataset",
+    srcs = [
+        "dataset.py",
+	],
+    base_module = "",
+    py_version = "3",
+    deps = [
+    "//experimental/deeplearning/frl-eye-tracking/pythonscripts/annotation:annotation",
+    "//pytorch/vision:torchvision"
+    ],
+    external_deps = [
+        ("numpy", None),
+        ("Pillow", None),
+        ("opencv3", None, "opencv3-py"),
+
+    ],
+)
+
+python_library(
+    name = "dual_transform",
+    srcs = [
+    	"dual_transforms.py",
+	],
+    base_module = "",
+    py_version = "<3",
+    deps = [
+    "//pytorch/vision:torchvision"
+    ],
+    external_deps = [
+        ("numpy", None),
+        ("Pillow", None),
+        ("opencv3", None, "opencv3-py"),
+
+    ],
+)
+
+python_library(
+    name = "eval_utils",
+    srcs = [
+    	"eval_utils.py",
+	],
+    base_module = "",
+    py_version = "3",
+    deps = [
+    "//pytorch/vision:torchvision"
+    ],
+    external_deps = [
+        ("numpy", None),
+        ("Pillow", None),
+        ("opencv3", None, "opencv3-py"),
+
+    ],
+)
+
+python_library(
+    name = "generic_utils",
+    srcs = [
+    	"generic_utils.py",
+	],
+    base_module = "",
+    py_version = "3",
+    deps = [
+    ],
+    external_deps = [
+        ("numpy", None),
+        ("Pillow", None),
+    ],
+)
