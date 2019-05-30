@@ -102,8 +102,10 @@ if __name__ == "__main__":
             optimizer,
             args,
         )
-        train_loss = [t.detach().cpu().numpy() for t in train_loss_tensor]
-        val_loss = [t.detach().cpu().numpy() for t in val_loss_tensor]
+        train_loss = [t for t in train_loss_tensor]
+        val_loss = [t for t in val_loss_tensor]
+        # train_loss = [t.detach().cpu().numpy() for t in train_loss_tensor]
+        # val_loss = [t.detach().cpu().numpy() for t in val_loss_tensor]
 
         try:
             o = open("%s/loss.pkl" % args.output_dir, "wb")
@@ -117,7 +119,7 @@ if __name__ == "__main__":
         pm = run_testing(
             val_dataloader,
             model,
-            args
+            args,
         )
         print('Global Mean Accuracy:', np.array(pm.GA).mean())
         print('Mean IOU:', np.array(pm.IOU).mean())
