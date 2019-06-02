@@ -12,7 +12,7 @@ import utils.photometric_transforms as ph_transforms
 from utils.generic_utils import parse_list, id_generator, get_free_gpu
 from data_provider.eyeDataset import dataloader
 from helper_functions.torchsummary import summary
-from helper_functions.trainer import run_training, run_testing, run_prediction
+from helper_functions.trainer import run_training, run_testing, run_prediction, run_finetune
 from helper_functions.trainer_utils import SoftDiceLoss, define_criterion
 from helper_functions.analysis import generate_result_images
 from helper_functions.config import ReadConfig,augment_args
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("--data-root", type="str",
                       dest="data_root",
-                      help="Path to data folder",)
+                      help="list of Path to data folder",)
     parser.add_option("--save-dir", type="str",
                       dest="save_dir",
                       help="Path to folder where model is saved")
@@ -47,6 +47,9 @@ if __name__ == "__main__":
     parser.add_option("--test",action="store_true",
                       dest="test",default=False,
                       help="run testing (generate result images)",)
+    parser.add_option("--finetune", action="store_true",
+                      dest="finetune", default=False,
+                      help="finetune model", )
 
 
 #### Read commandline arguments and network configuration fron input .ini file
@@ -74,8 +77,10 @@ if __name__ == "__main__":
         weight_decay = args.l2,
     )
 
+    print("Input Arguments: {}".format(args))
+
 ##### Load datasets
-    if args.train:
+    if args.train or args.finetune:
         train_set, train_dataloader = dataloader(
             args,
             type="train",
@@ -86,7 +91,7 @@ if __name__ == "__main__":
         )
 
     ## load validation data set
-    if args.train or args.val:
+    if args.train or args.val or args.finetune:
         val_set, val_dataloader = dataloader(
             args,
             type = "val",
@@ -154,11 +159,42 @@ if __name__ == "__main__":
         except:
             print('Output directory not specified')
 
+        print("Generating predicted images ...")
         for i in range(len(data_test)):
             generate_result_images(
-                data_test[i],
-                acts_test[i],
-                preds_test[i],
-                args,
+                input_image = data_test[i],
+                target_image = acts_test[i],
+                pred_image = preds_test[i],
+                args=args,
+                iou = pm_test.IOU[i],
                 count = i,
             )
+
+    if args.finetune:
+        if args.checkpoint:
+            model.load_state_dict(torch.load(args.checkpoint))
+
+        # # make optimizer only for certain layer
+        # optimizer = torch.optim.Adam(
+        #     model.layer.parameters(),
+        #     lr=args.lr,
+        #     weight_decay=args.l2,
+        # )
+
+        train_loss_tensor, val_loss_tensor = run_finetune(
+            train_dataloader,
+            val_dataloader,
+            model,
+            criterion,
+            optimizer,
+            args,
+        )
+        train_loss = [t for t in train_loss_tensor]
+        val_loss = [t for t in val_loss_tensor]
+
+        try:
+            o = open("%s/loss.pkl" % args.output_dir, "wb")
+            pickle.dump([train_loss, val_loss], o, protocol=2)
+            o.close()
+        except FileNotFoundError as e:
+            print(e)

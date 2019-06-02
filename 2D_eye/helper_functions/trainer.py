@@ -53,15 +53,16 @@ def train(
     t_start = time.time()
     CUDA = args.gpu is not None
 
-    for _, (data, label) in tqdm.tqdm(enumerate(train_loader), total=train_loader.__len__()):
-        data, label = Variable(data).float(), \
+    for batch_idx, data in tqdm.tqdm(enumerate(train_loader), total = train_loader.__len__()):
+        image, label = data
+        image, label = Variable(image).float(), \
                       Variable(label).type(torch.LongTensor)
 
         if CUDA:
-            data = data.cuda(args.gpu)
+            image = image.cuda(args.gpu)
             label = label.cuda(args.gpu)
 
-        predicted_tensor, softmaxed_tensor = model(data)
+        predicted_tensor, softmaxed_tensor = model(image)
         optimizer.zero_grad()
         loss = criterion(predicted_tensor, label)
         loss.backward()
@@ -106,17 +107,18 @@ def validate(
     loss_f = 0
     save_img_bool = True
     batch_idx_img = np.random.randint(0,val_loader.__len__())
-    for batch_idx, (data, label) in tqdm.tqdm(enumerate(val_loader), total=val_loader.__len__()):
-        data, label = Variable(data).float(), \
+    for batch_idx, data in tqdm.tqdm(enumerate(val_loader), total=val_loader.__len__()):
+        image, label = data
+        image, label = Variable(image).float(), \
                       Variable(label).type(torch.LongTensor)
 
         if CUDA:
-            data = data.cuda(args.gpu)
+            image = image.cuda(args.gpu)
             label = label.cuda(args.gpu)
 
 
         with torch.set_grad_enabled(False):
-            predicted_tensor, softmaxed_tensor = model(data)
+            predicted_tensor, softmaxed_tensor = model(image)
 
         loss = criterion(predicted_tensor, label)
         loss_f += loss.item()
@@ -133,7 +135,7 @@ def validate(
         id_img = np.random.randint(0, args.batch_size)
         for idx, predicted_mask in enumerate(predicted_tensor):
             if idx == id_img and batch_idx == batch_idx_img:
-                input_image, target_mask = data[idx], label[idx]
+                input_image, target_mask = image[idx], label[idx]
                 c,h,w = input_image.size()
                 if save_img_bool:
                     fig = plt.figure()
@@ -251,37 +253,9 @@ def run_testing(
     '''
     model.eval()
     CUDA = args.gpu is not None
-    preds = []
-    acts = []
-    inp_data = []
-
-    for batch_idx, (data, label) in enumerate(val_loader):
-        data, label = Variable(data).float(), \
-                      Variable(label).type(torch.LongTensor)
-
-        if CUDA:
-            data = data.cuda(args.gpu)
-            label = label.cuda(args.gpu)
-
-        with torch.set_grad_enabled(False):
-            if args.caffe:
-                predicted_tensor = model(data)
-            else:
-                predicted_tensor, softmaxed_tensor = model(data)
-        inp_data.append(data.detach().cpu().numpy())
-        preds.append(predicted_tensor.detach().cpu().numpy())
-        acts.append(data.detach().cpu().numpy())
-
-    for i in range(len(preds)):
-        if i == 0:
-            collate_inp_data = inp_data[i]
-            collate_preds = preds[i]
-            collate_acts = acts[i]
-        else:
-            collate_inp_data = np.vstack([collate_inp_data,inp_data[i]])
-            collate_preds = np.vstack([collate_preds,preds[i]])
-            collate_acts = np.vstack([collate_acts,acts[i]])
-    collate_preds = np.argmax(collate_preds,1)
+    # preds = []
+    # acts = []
+    # inp_data = []
 
     ## Compute Metrics:
     Global_Accuracy=[]; Class_Accuracy=[]; Precision=[]; Recall=[]; F1=[]; IOU=[]
@@ -291,25 +265,49 @@ def run_testing(
         Precision,
         Recall,
         F1,
-        IOU
+        IOU,
     )
-    start=time.time()
 
-    for i in range(collate_acts.shape[0]):
-        ga, ca, prec, rec, f1, iou = evaluate_segmentation(
-            collate_preds[i],
-            collate_acts[i],
-            NUM_CLASSES
-        )
-        pm.GA.append(ga)
-        pm.CA.append(ca)
-        pm.Precision.append(prec)
-        pm.Recall.append(rec)
-        pm.F1.append(f1)
-        pm.IOU.append(iou)
-    print ('Time to compute scores...',time.time()-start)
+    for batch_idx, data in tqdm.tqdm(enumerate(val_loader), total = val_loader.__len__()):
+        image, label = data
+        image, label = Variable(image).float(), \
+                      Variable(label).type(torch.LongTensor)
+
+        if CUDA:
+            image = image.cuda(args.gpu)
+            label = label.cuda(args.gpu)
+
+        with torch.set_grad_enabled(False):
+            predicted_tensor, softmaxed_tensor = model(image)
+
+        image = image.detach().cpu().numpy()
+        label = label.detach().cpu().numpy()
+        pred = np.argmax(predicted_tensor.detach().cpu().numpy(), axis=1)
+
+        if batch_idx == 0:
+            collate_image = image.copy()
+            collate_preds = pred.copy()
+            collate_labels = label.copy()
+        else:
+            collate_image = np.vstack([collate_image, image.copy()])
+            collate_preds = np.vstack([collate_preds, pred.copy()])
+            collate_labels = np.vstack([collate_labels, label.copy()])
+
+        for idx in np.arange(pred.shape[0]):
+            ga, ca, prec, rec, f1, iou = evaluate_segmentation(
+                pred[idx, :],
+                label[idx, :],
+                NUM_CLASSES,
+            )
+            pm.GA.append(ga)
+            pm.CA.append(ca)
+            pm.Precision.append(prec)
+            pm.Recall.append(rec)
+            pm.F1.append(f1)
+            pm.IOU.append(iou)
+
     if get_images:
-        return pm, collate_inp_data,collate_preds,collate_acts
+        return pm, collate_image, collate_preds, collate_labels
     else:
         return pm
 
@@ -331,31 +329,97 @@ def run_prediction(
     model.eval()
     CUDA = args.gpu is not None
     preds = []
-    inp_data = []
+    inp_image = []
 
-    for batch_idx, (data, label) in enumerate(val_loader):
-        data, label = Variable(data).float(), \
+    for batch_idx, data in tqdm.tqdm(enumerate(val_loader), total = val_loader.__len__()):
+        image, label = data
+        image, label = Variable(image).float(), \
                       Variable(label).type(torch.LongTensor)
 
         if CUDA:
-            data = data.cuda(args.gpu)
+            image = image.cuda(args.gpu)
             label = label.cuda(args.gpu)
 
         with torch.set_grad_enabled(False):
-            if args.caffe:
-                predicted_tensor = model(data)
-            else:
-                predicted_tensor, softmaxed_tensor = model(data)
-        inp_data.append(data.detach().cpu().numpy())
+            predicted_tensor, softmaxed_tensor = model(image)
+
+        inp_image.append(image.detach().cpu().numpy())
         preds.append(predicted_tensor.detach().cpu().numpy())
 
     for i in range(len(preds)):
         if i == 0:
-            collate_inp_data = inp_data[i]
+            collate_inp_image = inp_image[i]
             collate_preds = preds[i]
         else:
-            collate_inp_data = np.vstack([collate_inp_data,inp_data[i]])
-            collate_preds = np.vstack([collate_preds,preds[i]])
-    collate_preds = np.argmax(collate_preds,1)
+            collate_inp_image = np.vstack([collate_inp_image, inp_image[i]])
+            collate_preds = np.vstack([collate_preds, preds[i]])
+    collate_preds = np.argmax(collate_preds, 1)
 
-    return collate_inp_data, collate_preds
+    return collate_inp_image, collate_preds
+
+def run_finetune(
+        train_loader,
+        val_loader,
+        model,
+        criterion,
+        optimizer,
+        args,
+):
+    '''
+    Fine tune model
+    :param train_loader: pytorch dataloader
+    :param val_loader: pytorch dataloader
+    :param model: pytorch model
+    :param criterion: loss function
+    :param optimizer: SGD optimizer function
+    :param args: input arguments from __main__
+    '''
+    prev_loss = float("inf")
+    val_loss_f = float("inf")
+    train_loss = []
+    val_loss = []
+
+    # # freeze layers but only leave certain layer to learn
+    # for name, param in model.named_modules():
+    #     if name != 'conv11d':
+    #         param.requires_grad = False
+
+    for epoch in range(args.num_epochs):
+        if train_loader is not None:
+            adjust_learning_rate(optimizer, epoch, args)
+            loss_f = train(
+                train_loader,
+                model,
+                criterion,
+                optimizer,
+                args,
+                epoch,
+                prev_loss,
+            )
+            train_loss.append(loss_f)
+            prev_loss = np.array(train_loss).min()
+        ## Validate per epoch
+        if epoch%10 == 0:
+            if val_loader is not None:
+                val_loss_f = validate(
+                    val_loader,
+                    model,
+                    criterion,args,
+                    epoch,
+                    val_loss_f,
+                )
+                val_loss.append(val_loss_f)
+                val_loss_f = np.array(val_loss).min()
+
+    ## run validation on last epoch
+    val_loss_f = validate(
+        val_loader,
+        model,
+        criterion,
+        args,
+        epoch,
+        val_loss_f
+    )
+    val_loss.append(val_loss_f)
+
+    return train_loss,val_loss

@@ -32,6 +32,7 @@ def generate_result_images(
         target_image,
         pred_image,
         args,
+        iou,
         count=0,
 ):
     '''
@@ -41,6 +42,7 @@ def generate_result_images(
     :param target_image: 2D-array of target image
     :param pred_image: 2D-array of pred_image
     :param args: input arguments from __main__
+    :param iou: IOU for the prediction
     :param count: counter to keep tab on the image count to generate prediction output file
     '''
     images_dir = "%s/Test_Images" % args.output_dir
@@ -65,14 +67,14 @@ def generate_result_images(
         if target_image is not None:
             a = fig.add_subplot(1,3,2)
             plt.imshow(target_image)
-            a.set_title("Ground Truth")
+            a.set_title("GT")
 
         if target_image is None:
             a = fig.add_subplot(1,2,2)
         else:
             a = fig.add_subplot(1,3,3)
         plt.imshow(pred_image)
-        a.set_title('Predicted Mask')
+        a.set_title('Prediction w/ IoU {:.3f}'.format(iou))
         fig.savefig(os.path.join(images_dir, "prediction_{}.png".format(count)))
         plt.close(fig)
 

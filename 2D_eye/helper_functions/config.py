@@ -4,6 +4,11 @@ import configparser
 import re
 import glob
 
+
+def parse_datalist(data_list):
+    dataroot_list = [str(d) for d in data_list.split(',')]
+    return dataroot_list
+
 def ReadConfig(File):
     '''
     Module that defines the structure for model config files
@@ -57,7 +62,7 @@ def augment_args(GP,TP,args):
     args.network, args.skip_type, args.BR, args.SC,args.BN =get_net_config(GP['g_Network'])
     args.channels=GP['g_Channels']
     args.classes=GP['g_Classes']
-    args.dataset=GP['g_dataset']
+    args.dataset = GP['g_dataset']
     args.lr=TP['LR']
     args.batch_size=TP['Batch_Size']
     args.loss=TP['Loss']
@@ -65,4 +70,25 @@ def augment_args(GP,TP,args):
     args.num_epochs=TP['Epochs']
     args.l2=TP['L2']
     args.brightness_scale = TP['brightness_scale']
+
+    data_list = parse_datalist(args.data_root)
+    if len(data_list) == 1:
+        args.data_root = data_list[0]
+    elif len(data_list) == 2:
+        data_root_1, data_root_2 = data_list[0], data_list[1]
+        if "OpenEDS" in data_root_1 and "Calipso" in data_root_2:
+            pass
+        elif "OpenEDS" in data_root_2 and "Calipso" in data_root_1:
+            data_root_1, data_root_2 = data_root_2, data_root_1
+        else:
+            raise ValueError("Invalid data root {} and {}!".format(
+                data_root_1,
+                data_root_2,
+            ))
+        args.openeds_root, args.calipso_root = data_root_1, data_root_2
+    else:
+        raise ValueError("Invalid data root {}".format(
+            data_list,
+        ))
+
     return args
