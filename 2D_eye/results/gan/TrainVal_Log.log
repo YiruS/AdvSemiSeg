@@ -1,0 +1,323 @@
+----------------------------------------------------------------
+        Layer (type)         Output Shape     Filter      MAC #  Param #
+================================================================
+1
+            Conv2d-1   [-1, 64, 184, 184]     (3, 3)   19501056      640
+       BatchNorm2d-2   [-1, 64, 184, 184]       None          0      128
+            Conv2d-5   [-1, 64, 184, 184]     (3, 3) 1248067584   36,928
+       BatchNorm2d-6   [-1, 64, 184, 184]       None          0      128
+            Conv2d-9    [-1, 128, 92, 92]     (3, 3)  624033792   73,856
+      BatchNorm2d-10    [-1, 128, 92, 92]       None          0      256
+           Conv2d-13    [-1, 128, 92, 92]     (3, 3) 1248067584  147,584
+      BatchNorm2d-14    [-1, 128, 92, 92]       None          0      256
+           Conv2d-17    [-1, 256, 46, 46]     (3, 3)  624033792  295,168
+      BatchNorm2d-18    [-1, 256, 46, 46]       None          0      512
+           Conv2d-21    [-1, 256, 46, 46]     (3, 3) 1248067584  590,080
+      BatchNorm2d-22    [-1, 256, 46, 46]       None          0      512
+           Conv2d-25    [-1, 256, 46, 46]     (3, 3) 1248067584  590,080
+      BatchNorm2d-26    [-1, 256, 46, 46]       None          0      512
+  ConvTranspose2d-29    [-1, 256, 46, 46]     (3, 3) 1248067584  590,080
+      BatchNorm2d-30    [-1, 256, 46, 46]       None          0      512
+  ConvTranspose2d-33    [-1, 256, 46, 46]     (3, 3) 1248067584  590,080
+      BatchNorm2d-34    [-1, 256, 46, 46]       None          0      512
+  ConvTranspose2d-37    [-1, 128, 46, 46]     (3, 3)  624033792  295,040
+      BatchNorm2d-38    [-1, 128, 46, 46]       None          0      256
+  ConvTranspose2d-41    [-1, 128, 92, 92]     (3, 3) 1248067584  147,584
+      BatchNorm2d-42    [-1, 128, 92, 92]       None          0      256
+  ConvTranspose2d-45     [-1, 64, 92, 92]     (3, 3)  624033792   73,792
+      BatchNorm2d-46     [-1, 64, 92, 92]       None          0      128
+  ConvTranspose2d-49   [-1, 64, 184, 184]     (3, 3) 1248067584   36,928
+      BatchNorm2d-50   [-1, 64, 184, 184]       None          0      128
+  ConvTranspose2d-53    [-1, 4, 184, 184]     (3, 3)   78004224    2,308
+      BatchNorm2d-54    [-1, 4, 184, 184]       None          0        8
+================================================================
+Total params: 3,474,252
+Trainable params: 3,474,252
+Non-trainable params: 0
+Total MACs: 12,578,181,120
+----------------------------------------------------------------
+Input size (MB): 0.13
+Forward/backward pass size (MB): 408.12
+Params size (MB): 13.25
+Estimated Total Size (MB): 421.50
+Estimated MACs (M): 12578.18
+----------------------------------------------------------------
+Input Arguments: {'data_root': '/home/yirus/Data/OpenEDS_SS_TL/,/home/yirus/Data/Calipso_TL/GT_0.25/', 'save_dir': 'results/gan', 'output_dir': 'results/gan', 'ini_file': 'Ini_Files/segnet_small_ce_gan.ini', 'image_size': 184, 'lambda_ce': 1.0, 'lambda_adv': 1.0, 'checkpoint_SS': None, 'checkpoint_DNet': None, 'train': True, 'val': True, 'test': False, 'network': 'segnet_small', 'skip_type': 'mul', 'BR': False, 'SC': False, 'BN': True, 'channels': 1, 'classes': 4, 'dataset': 'Fused', 'lr_SS': 0.0001, 'lr_G': 0.0001, 'batch_size': 4, 'loss': 'ce', 'workers': 3, 'num_epochs': 200, 'l2': 1e-05, 'brightness_scale': 2.0, 'openeds_root': '/home/yirus/Data/OpenEDS_SS_TL/', 'calipso_root': '/home/yirus/Data/Calipso_TL/GT_0.25/', 'gpu': 0, 'CUDA': True, 'transforms': [<utils.photometric_transforms.ChangeBrightness object at 0x7f77c18f4208>, <utils.photometric_transforms.ToTensor object at 0x7f77c18f4278>]}
+Found 8916 images and 8916 labels
+Done loading OpenEDS/train in 4 sec
+Found 1032 images and 1032 labels
+Done loading Calipso/train in 0 sec
+Found 2403 images and 2403 labels
+Done loading OpenEDS/val in 1 sec
+Found 1548 images and 1548 labels
+Done loading Calipso/val in 0 sec
+Epoch #1	 SSNet Overall Loss: 1.6825	 CE1: 0.3304 	 CE2: 0.6941 	 ADV: 0.6580
+Epoch #1	 DNet Overall Loss: 0.1753	 GT loss: 0.0950 	 Pred loss: 0.6941
+Epoch #1	 Val Loss: 0.75242143
+inf , 0.752421425756558
+saving checkpoint ....
+Epoch #2	 SSNet Overall Loss: 0.5083	 CE1: 0.2008 	 CE2: 0.3074 	 ADV: 0.0000
+Epoch #2	 DNet Overall Loss: 0.2390	 GT loss: 0.0890 	 Pred loss: 1.2963
+Epoch #3	 SSNet Overall Loss: 0.3738	 CE1: 0.1466 	 CE2: 0.2269 	 ADV: 0.0003
+Epoch #3	 DNet Overall Loss: 0.2493	 GT loss: 0.0955 	 Pred loss: 1.3283
+Epoch #4	 SSNet Overall Loss: 0.2910	 CE1: 0.1114 	 CE2: 0.1789 	 ADV: 0.0007
+Epoch #4	 DNet Overall Loss: 0.2398	 GT loss: 0.0951 	 Pred loss: 1.2502
+Epoch #5	 SSNet Overall Loss: 0.2289	 CE1: 0.0884 	 CE2: 0.1400 	 ADV: 0.0005
+Epoch #5	 DNet Overall Loss: 0.2386	 GT loss: 0.0919 	 Pred loss: 1.2666
+Epoch #6	 SSNet Overall Loss: 0.1996	 CE1: 0.0740 	 CE2: 0.1253 	 ADV: 0.0003
+Epoch #6	 DNet Overall Loss: 0.2591	 GT loss: 0.0947 	 Pred loss: 1.4200
+Epoch #7	 SSNet Overall Loss: 0.1676	 CE1: 0.0639 	 CE2: 0.1030 	 ADV: 0.0006
+Epoch #7	 DNet Overall Loss: 0.2446	 GT loss: 0.0914 	 Pred loss: 1.3235
+Epoch #8	 SSNet Overall Loss: 0.1497	 CE1: 0.0578 	 CE2: 0.0915 	 ADV: 0.0003
+Epoch #8	 DNet Overall Loss: 0.2403	 GT loss: 0.0860 	 Pred loss: 1.3332
+Epoch #9	 SSNet Overall Loss: 0.1358	 CE1: 0.0534 	 CE2: 0.0821 	 ADV: 0.0002
+Epoch #9	 DNet Overall Loss: 0.2431	 GT loss: 0.0832 	 Pred loss: 1.3812
+Epoch #10	 SSNet Overall Loss: 0.1338	 CE1: 0.0504 	 CE2: 0.0832 	 ADV: 0.0001
+Epoch #10	 DNet Overall Loss: 0.2489	 GT loss: 0.0869 	 Pred loss: 1.4000
+Epoch #11	 SSNet Overall Loss: 0.1210	 CE1: 0.0478 	 CE2: 0.0729 	 ADV: 0.0003
+Epoch #11	 DNet Overall Loss: 0.2400	 GT loss: 0.0847 	 Pred loss: 1.3421
+Epoch #11	 Val Loss: 0.26620088
+0.752421425756558 , 0.26620088019035276
+saving checkpoint ....
+Epoch #12	 SSNet Overall Loss: 0.1238	 CE1: 0.0470 	 CE2: 0.0766 	 ADV: 0.0001
+Epoch #12	 DNet Overall Loss: 0.2439	 GT loss: 0.0860 	 Pred loss: 1.3641
+Epoch #13	 SSNet Overall Loss: 0.1090	 CE1: 0.0451 	 CE2: 0.0638 	 ADV: 0.0002
+Epoch #13	 DNet Overall Loss: 0.2427	 GT loss: 0.0876 	 Pred loss: 1.3406
+Epoch #14	 SSNet Overall Loss: 0.1125	 CE1: 0.0447 	 CE2: 0.0676 	 ADV: 0.0002
+Epoch #14	 DNet Overall Loss: 0.2258	 GT loss: 0.0781 	 Pred loss: 1.2755
+Epoch #15	 SSNet Overall Loss: 0.1042	 CE1: 0.0438 	 CE2: 0.0603 	 ADV: 0.0001
+Epoch #15	 DNet Overall Loss: 0.2140	 GT loss: 0.0794 	 Pred loss: 1.1627
+Epoch #16	 SSNet Overall Loss: 0.1022	 CE1: 0.0432 	 CE2: 0.0590 	 ADV: 0.0001
+Epoch #16	 DNet Overall Loss: 0.2072	 GT loss: 0.0809 	 Pred loss: 1.0911
+Epoch #17	 SSNet Overall Loss: 0.1009	 CE1: 0.0420 	 CE2: 0.0588 	 ADV: 0.0002
+Epoch #17	 DNet Overall Loss: 0.2018	 GT loss: 0.0775 	 Pred loss: 1.0731
+Epoch #18	 SSNet Overall Loss: 0.1002	 CE1: 0.0413 	 CE2: 0.0587 	 ADV: 0.0002
+Epoch #18	 DNet Overall Loss: 0.1986	 GT loss: 0.0799 	 Pred loss: 1.0262
+Epoch #19	 SSNet Overall Loss: 0.0983	 CE1: 0.0410 	 CE2: 0.0572 	 ADV: 0.0002
+Epoch #19	 DNet Overall Loss: 0.1999	 GT loss: 0.0777 	 Pred loss: 1.0554
+Epoch #20	 SSNet Overall Loss: 0.0952	 CE1: 0.0403 	 CE2: 0.0547 	 ADV: 0.0002
+Epoch #20	 DNet Overall Loss: 0.1963	 GT loss: 0.0797 	 Pred loss: 1.0077
+Epoch #21	 SSNet Overall Loss: 0.1024	 CE1: 0.0401 	 CE2: 0.0621 	 ADV: 0.0002
+Epoch #21	 DNet Overall Loss: 0.1951	 GT loss: 0.0786 	 Pred loss: 1.0070
+Epoch #21	 Val Loss: 0.23876921
+0.26620088019035276 , 0.23876921165474627
+saving checkpoint ....
+Epoch #22	 SSNet Overall Loss: 0.0911	 CE1: 0.0393 	 CE2: 0.0516 	 ADV: 0.0002
+Epoch #22	 DNet Overall Loss: 0.1941	 GT loss: 0.0800 	 Pred loss: 0.9860
+Epoch #23	 SSNet Overall Loss: 0.0887	 CE1: 0.0397 	 CE2: 0.0488 	 ADV: 0.0002
+Epoch #23	 DNet Overall Loss: 0.1934	 GT loss: 0.0792 	 Pred loss: 0.9868
+Epoch #24	 SSNet Overall Loss: 0.0906	 CE1: 0.0385 	 CE2: 0.0520 	 ADV: 0.0002
+Epoch #24	 DNet Overall Loss: 0.1926	 GT loss: 0.0804 	 Pred loss: 0.9695
+Epoch #25	 SSNet Overall Loss: 0.0961	 CE1: 0.0387 	 CE2: 0.0573 	 ADV: 0.0002
+Epoch #25	 DNet Overall Loss: 0.1924	 GT loss: 0.0796 	 Pred loss: 0.9740
+Epoch #26	 SSNet Overall Loss: 0.0848	 CE1: 0.0376 	 CE2: 0.0470 	 ADV: 0.0002
+Epoch #26	 DNet Overall Loss: 0.1919	 GT loss: 0.0807 	 Pred loss: 0.9609
+Epoch #27	 SSNet Overall Loss: 0.0862	 CE1: 0.0372 	 CE2: 0.0488 	 ADV: 0.0002
+Epoch #27	 DNet Overall Loss: 0.1913	 GT loss: 0.0800 	 Pred loss: 0.9619
+Epoch #28	 SSNet Overall Loss: 0.0824	 CE1: 0.0365 	 CE2: 0.0458 	 ADV: 0.0002
+Epoch #28	 DNet Overall Loss: 0.1911	 GT loss: 0.0808 	 Pred loss: 0.9527
+Epoch #29	 SSNet Overall Loss: 0.0799	 CE1: 0.0360 	 CE2: 0.0438 	 ADV: 0.0001
+Epoch #29	 DNet Overall Loss: 0.1913	 GT loss: 0.0799 	 Pred loss: 0.9620
+Epoch #30	 SSNet Overall Loss: 0.0788	 CE1: 0.0356 	 CE2: 0.0431 	 ADV: 0.0001
+Epoch #30	 DNet Overall Loss: 0.1914	 GT loss: 0.0805 	 Pred loss: 0.9582
+Epoch #31	 SSNet Overall Loss: 0.0778	 CE1: 0.0349 	 CE2: 0.0428 	 ADV: 0.0002
+Epoch #31	 DNet Overall Loss: 0.1899	 GT loss: 0.0807 	 Pred loss: 0.9437
+Epoch #31	 Val Loss: 0.35434899
+Epoch #32	 SSNet Overall Loss: 0.0765	 CE1: 0.0338 	 CE2: 0.0426 	 ADV: 0.0001
+Epoch #32	 DNet Overall Loss: 0.1898	 GT loss: 0.0813 	 Pred loss: 0.9368
+Epoch #33	 SSNet Overall Loss: 0.0735	 CE1: 0.0339 	 CE2: 0.0394 	 ADV: 0.0002
+Epoch #33	 DNet Overall Loss: 0.1890	 GT loss: 0.0807 	 Pred loss: 0.9356
+Epoch #34	 SSNet Overall Loss: 0.0749	 CE1: 0.0331 	 CE2: 0.0417 	 ADV: 0.0001
+Epoch #34	 DNet Overall Loss: 0.1897	 GT loss: 0.0810 	 Pred loss: 0.9389
+Epoch #35	 SSNet Overall Loss: 0.0694	 CE1: 0.0321 	 CE2: 0.0372 	 ADV: 0.0001
+Epoch #35	 DNet Overall Loss: 0.1884	 GT loss: 0.0809 	 Pred loss: 0.9289
+Epoch #36	 SSNet Overall Loss: 0.0709	 CE1: 0.0319 	 CE2: 0.0389 	 ADV: 0.0001
+Epoch #36	 DNet Overall Loss: 0.1878	 GT loss: 0.0819 	 Pred loss: 0.9150
+Epoch #37	 SSNet Overall Loss: 0.0683	 CE1: 0.0308 	 CE2: 0.0373 	 ADV: 0.0001
+Epoch #37	 DNet Overall Loss: 0.1872	 GT loss: 0.0807 	 Pred loss: 0.9207
+Epoch #38	 SSNet Overall Loss: 0.0791	 CE1: 0.0305 	 CE2: 0.0484 	 ADV: 0.0001
+Epoch #38	 DNet Overall Loss: 0.1875	 GT loss: 0.0823 	 Pred loss: 0.9083
+Epoch #39	 SSNet Overall Loss: 0.0634	 CE1: 0.0294 	 CE2: 0.0339 	 ADV: 0.0001
+Epoch #39	 DNet Overall Loss: 0.1866	 GT loss: 0.0803 	 Pred loss: 0.9179
+Epoch #40	 SSNet Overall Loss: 0.0625	 CE1: 0.0289 	 CE2: 0.0335 	 ADV: 0.0001
+Epoch #40	 DNet Overall Loss: 0.1874	 GT loss: 0.0829 	 Pred loss: 0.9026
+Epoch #41	 SSNet Overall Loss: 0.0611	 CE1: 0.0283 	 CE2: 0.0327 	 ADV: 0.0001
+Epoch #41	 DNet Overall Loss: 0.1866	 GT loss: 0.0805 	 Pred loss: 0.9165
+Epoch #41	 Val Loss: 0.28309955
+Epoch #42	 SSNet Overall Loss: 0.0619	 CE1: 0.0278 	 CE2: 0.0340 	 ADV: 0.0001
+Epoch #42	 DNet Overall Loss: 0.1869	 GT loss: 0.0829 	 Pred loss: 0.8986
+Epoch #43	 SSNet Overall Loss: 0.0593	 CE1: 0.0271 	 CE2: 0.0321 	 ADV: 0.0001
+Epoch #43	 DNet Overall Loss: 0.1861	 GT loss: 0.0807 	 Pred loss: 0.9106
+Epoch #44	 SSNet Overall Loss: 0.0580	 CE1: 0.0267 	 CE2: 0.0312 	 ADV: 0.0001
+Epoch #44	 DNet Overall Loss: 0.1870	 GT loss: 0.0829 	 Pred loss: 0.8992
+Epoch #45	 SSNet Overall Loss: 0.0585	 CE1: 0.0261 	 CE2: 0.0323 	 ADV: 0.0001
+Epoch #45	 DNet Overall Loss: 0.1868	 GT loss: 0.0813 	 Pred loss: 0.9111
+Epoch #46	 SSNet Overall Loss: 0.0556	 CE1: 0.0257 	 CE2: 0.0298 	 ADV: 0.0001
+Epoch #46	 DNet Overall Loss: 0.1866	 GT loss: 0.0826 	 Pred loss: 0.8983
+Epoch #47	 SSNet Overall Loss: 0.0547	 CE1: 0.0253 	 CE2: 0.0293 	 ADV: 0.0001
+Epoch #47	 DNet Overall Loss: 0.1871	 GT loss: 0.0822 	 Pred loss: 0.9068
+Epoch #48	 SSNet Overall Loss: 0.0547	 CE1: 0.0248 	 CE2: 0.0298 	 ADV: 0.0001
+Epoch #48	 DNet Overall Loss: 0.1878	 GT loss: 0.0825 	 Pred loss: 0.9094
+Epoch #49	 SSNet Overall Loss: 0.0530	 CE1: 0.0243 	 CE2: 0.0286 	 ADV: 0.0001
+Epoch #49	 DNet Overall Loss: 0.1870	 GT loss: 0.0827 	 Pred loss: 0.9015
+Epoch #50	 SSNet Overall Loss: 0.0528	 CE1: 0.0238 	 CE2: 0.0288 	 ADV: 0.0001
+Epoch #50	 DNet Overall Loss: 0.1894	 GT loss: 0.0831 	 Pred loss: 0.9188
+Epoch #51	 SSNet Overall Loss: 0.0524	 CE1: 0.0238 	 CE2: 0.0285 	 ADV: 0.0001
+Epoch #51	 DNet Overall Loss: 0.1875	 GT loss: 0.0823 	 Pred loss: 0.9087
+Epoch #51	 Val Loss: 0.31583742
+Epoch #52	 SSNet Overall Loss: 0.0508	 CE1: 0.0234 	 CE2: 0.0273 	 ADV: 0.0001
+Epoch #52	 DNet Overall Loss: 0.1900	 GT loss: 0.0843 	 Pred loss: 0.9135
+Epoch #53	 SSNet Overall Loss: 0.0507	 CE1: 0.0227 	 CE2: 0.0278 	 ADV: 0.0001
+Epoch #53	 DNet Overall Loss: 0.1909	 GT loss: 0.0830 	 Pred loss: 0.9326
+Epoch #54	 SSNet Overall Loss: 0.0495	 CE1: 0.0227 	 CE2: 0.0267 	 ADV: 0.0001
+Epoch #54	 DNet Overall Loss: 0.1900	 GT loss: 0.0842 	 Pred loss: 0.9144
+Epoch #55	 SSNet Overall Loss: 0.0527	 CE1: 0.0223 	 CE2: 0.0302 	 ADV: 0.0002
+Epoch #55	 DNet Overall Loss: 0.1916	 GT loss: 0.0838 	 Pred loss: 0.9315
+Epoch #56	 SSNet Overall Loss: 0.0482	 CE1: 0.0222 	 CE2: 0.0260 	 ADV: 0.0001
+Epoch #56	 DNet Overall Loss: 0.1913	 GT loss: 0.0842 	 Pred loss: 0.9254
+Epoch #57	 SSNet Overall Loss: 0.0502	 CE1: 0.0217 	 CE2: 0.0283 	 ADV: 0.0002
+Epoch #57	 DNet Overall Loss: 0.1927	 GT loss: 0.0852 	 Pred loss: 0.9294
+Epoch #58	 SSNet Overall Loss: 0.0477	 CE1: 0.0215 	 CE2: 0.0260 	 ADV: 0.0002
+Epoch #58	 DNet Overall Loss: 0.1942	 GT loss: 0.0855 	 Pred loss: 0.9387
+Epoch #59	 SSNet Overall Loss: 0.0467	 CE1: 0.0214 	 CE2: 0.0252 	 ADV: 0.0002
+Epoch #59	 DNet Overall Loss: 0.1954	 GT loss: 0.0863 	 Pred loss: 0.9427
+Epoch #60	 SSNet Overall Loss: 0.0465	 CE1: 0.0210 	 CE2: 0.0253 	 ADV: 0.0001
+Epoch #60	 DNet Overall Loss: 0.1965	 GT loss: 0.0820 	 Pred loss: 0.9890
+Epoch #61	 SSNet Overall Loss: 0.0458	 CE1: 0.0208 	 CE2: 0.0249 	 ADV: 0.0001
+Epoch #61	 DNet Overall Loss: 0.1929	 GT loss: 0.0832 	 Pred loss: 0.9475
+Epoch #61	 Val Loss: 0.32620130
+Epoch #62	 SSNet Overall Loss: 0.0450	 CE1: 0.0206 	 CE2: 0.0244 	 ADV: 0.0001
+Epoch #62	 DNet Overall Loss: 0.1891	 GT loss: 0.0817 	 Pred loss: 0.9277
+Epoch #63	 SSNet Overall Loss: 0.0449	 CE1: 0.0207 	 CE2: 0.0240 	 ADV: 0.0002
+Epoch #63	 DNet Overall Loss: 0.1881	 GT loss: 0.0817 	 Pred loss: 0.9197
+Epoch #64	 SSNet Overall Loss: 0.0451	 CE1: 0.0204 	 CE2: 0.0246 	 ADV: 0.0001
+Epoch #64	 DNet Overall Loss: 0.1873	 GT loss: 0.0830 	 Pred loss: 0.9010
+Epoch #65	 SSNet Overall Loss: 0.0445	 CE1: 0.0200 	 CE2: 0.0244 	 ADV: 0.0001
+Epoch #65	 DNet Overall Loss: 0.1894	 GT loss: 0.0816 	 Pred loss: 0.9318
+Epoch #66	 SSNet Overall Loss: 0.0429	 CE1: 0.0198 	 CE2: 0.0230 	 ADV: 0.0001
+Epoch #66	 DNet Overall Loss: 0.1867	 GT loss: 0.0825 	 Pred loss: 0.9001
+Epoch #67	 SSNet Overall Loss: 0.0436	 CE1: 0.0197 	 CE2: 0.0238 	 ADV: 0.0001
+Epoch #67	 DNet Overall Loss: 0.1889	 GT loss: 0.0821 	 Pred loss: 0.9234
+Epoch #68	 SSNet Overall Loss: 0.0431	 CE1: 0.0197 	 CE2: 0.0234 	 ADV: 0.0001
+Epoch #68	 DNet Overall Loss: 0.1872	 GT loss: 0.0827 	 Pred loss: 0.9028
+Epoch #69	 SSNet Overall Loss: 0.0425	 CE1: 0.0192 	 CE2: 0.0231 	 ADV: 0.0001
+Epoch #69	 DNet Overall Loss: 0.1880	 GT loss: 0.0820 	 Pred loss: 0.9157
+Epoch #70	 SSNet Overall Loss: 0.0422	 CE1: 0.0192 	 CE2: 0.0229 	 ADV: 0.0001
+Epoch #70	 DNet Overall Loss: 0.1855	 GT loss: 0.0822 	 Pred loss: 0.8919
+Epoch #71	 SSNet Overall Loss: 0.0454	 CE1: 0.0193 	 CE2: 0.0260 	 ADV: 0.0001
+Epoch #71	 DNet Overall Loss: 0.1890	 GT loss: 0.0828 	 Pred loss: 0.9177
+Epoch #71	 Val Loss: 0.32208207
+Epoch #72	 SSNet Overall Loss: 0.0415	 CE1: 0.0186 	 CE2: 0.0228 	 ADV: 0.0001
+Epoch #72	 DNet Overall Loss: 0.1854	 GT loss: 0.0818 	 Pred loss: 0.8949
+Epoch #73	 SSNet Overall Loss: 0.0406	 CE1: 0.0186 	 CE2: 0.0219 	 ADV: 0.0001
+Epoch #73	 DNet Overall Loss: 0.1885	 GT loss: 0.0836 	 Pred loss: 0.9059
+Epoch #74	 SSNet Overall Loss: 0.0411	 CE1: 0.0185 	 CE2: 0.0225 	 ADV: 0.0001
+Epoch #74	 DNet Overall Loss: 0.1869	 GT loss: 0.0823 	 Pred loss: 0.9037
+Epoch #75	 SSNet Overall Loss: 0.0409	 CE1: 0.0184 	 CE2: 0.0224 	 ADV: 0.0001
+Epoch #75	 DNet Overall Loss: 0.1912	 GT loss: 0.0853 	 Pred loss: 0.9151
+Epoch #76	 SSNet Overall Loss: 0.0429	 CE1: 0.0184 	 CE2: 0.0244 	 ADV: 0.0001
+Epoch #76	 DNet Overall Loss: 0.1916	 GT loss: 0.0832 	 Pred loss: 0.9370
+Epoch #77	 SSNet Overall Loss: 0.0401	 CE1: 0.0182 	 CE2: 0.0217 	 ADV: 0.0001
+Epoch #77	 DNet Overall Loss: 0.1893	 GT loss: 0.0839 	 Pred loss: 0.9107
+Epoch #78	 SSNet Overall Loss: 0.0416	 CE1: 0.0190 	 CE2: 0.0225 	 ADV: 0.0001
+Epoch #78	 DNet Overall Loss: 0.1881	 GT loss: 0.0824 	 Pred loss: 0.9132
+Epoch #79	 SSNet Overall Loss: 0.0391	 CE1: 0.0176 	 CE2: 0.0214 	 ADV: 0.0001
+Epoch #79	 DNet Overall Loss: 0.1869	 GT loss: 0.0835 	 Pred loss: 0.8937
+Epoch #80	 SSNet Overall Loss: 0.0393	 CE1: 0.0183 	 CE2: 0.0209 	 ADV: 0.0001
+Epoch #80	 DNet Overall Loss: 0.1859	 GT loss: 0.0823 	 Pred loss: 0.8951
+Epoch #81	 SSNet Overall Loss: 0.0434	 CE1: 0.0178 	 CE2: 0.0255 	 ADV: 0.0001
+Epoch #81	 DNet Overall Loss: 0.1883	 GT loss: 0.0849 	 Pred loss: 0.8935
+Epoch #81	 Val Loss: 0.27736310
+Epoch #82	 SSNet Overall Loss: 0.0385	 CE1: 0.0174 	 CE2: 0.0210 	 ADV: 0.0002
+Epoch #82	 DNet Overall Loss: 0.1914	 GT loss: 0.0848 	 Pred loss: 0.9210
+Epoch #83	 SSNet Overall Loss: 0.0387	 CE1: 0.0175 	 CE2: 0.0211 	 ADV: 0.0001
+Epoch #83	 DNet Overall Loss: 0.1915	 GT loss: 0.0825 	 Pred loss: 0.9417
+Epoch #84	 SSNet Overall Loss: 0.0382	 CE1: 0.0175 	 CE2: 0.0207 	 ADV: 0.0001
+Epoch #84	 DNet Overall Loss: 0.1860	 GT loss: 0.0827 	 Pred loss: 0.8922
+Epoch #85	 SSNet Overall Loss: 0.0383	 CE1: 0.0174 	 CE2: 0.0208 	 ADV: 0.0001
+Epoch #85	 DNet Overall Loss: 0.1865	 GT loss: 0.0832 	 Pred loss: 0.8927
+Epoch #86	 SSNet Overall Loss: 0.0467	 CE1: 0.0180 	 CE2: 0.0286 	 ADV: 0.0001
+Epoch #86	 DNet Overall Loss: 0.1859	 GT loss: 0.0817 	 Pred loss: 0.8999
+Epoch #87	 SSNet Overall Loss: 0.0369	 CE1: 0.0166 	 CE2: 0.0202 	 ADV: 0.0001
+Epoch #87	 DNet Overall Loss: 0.1852	 GT loss: 0.0829 	 Pred loss: 0.8838
+Epoch #88	 SSNet Overall Loss: 0.0376	 CE1: 0.0172 	 CE2: 0.0203 	 ADV: 0.0001
+Epoch #88	 DNet Overall Loss: 0.1841	 GT loss: 0.0817 	 Pred loss: 0.8842
+Epoch #89	 SSNet Overall Loss: 0.0391	 CE1: 0.0170 	 CE2: 0.0220 	 ADV: 0.0001
+Epoch #89	 DNet Overall Loss: 0.1860	 GT loss: 0.0841 	 Pred loss: 0.8803
+Epoch #90	 SSNet Overall Loss: 0.0367	 CE1: 0.0167 	 CE2: 0.0198 	 ADV: 0.0001
+Epoch #90	 DNet Overall Loss: 0.1889	 GT loss: 0.0834 	 Pred loss: 0.9116
+Epoch #91	 SSNet Overall Loss: 0.0374	 CE1: 0.0169 	 CE2: 0.0204 	 ADV: 0.0001
+Epoch #91	 DNet Overall Loss: 0.1905	 GT loss: 0.0852 	 Pred loss: 0.9103
+Epoch #91	 Val Loss: 0.33082658
+Epoch #92	 SSNet Overall Loss: 0.0372	 CE1: 0.0167 	 CE2: 0.0204 	 ADV: 0.0001
+Epoch #92	 DNet Overall Loss: 0.1883	 GT loss: 0.0826 	 Pred loss: 0.9132
+Epoch #93	 SSNet Overall Loss: 0.0372	 CE1: 0.0166 	 CE2: 0.0205 	 ADV: 0.0001
+Epoch #93	 DNet Overall Loss: 0.1866	 GT loss: 0.0842 	 Pred loss: 0.8845
+Epoch #94	 SSNet Overall Loss: 0.0365	 CE1: 0.0165 	 CE2: 0.0199 	 ADV: 0.0001
+Epoch #94	 DNet Overall Loss: 0.1873	 GT loss: 0.0831 	 Pred loss: 0.9007
+Epoch #95	 SSNet Overall Loss: 0.0371	 CE1: 0.0164 	 CE2: 0.0206 	 ADV: 0.0001
+Epoch #95	 DNet Overall Loss: 0.1886	 GT loss: 0.0853 	 Pred loss: 0.8929
+Epoch #96	 SSNet Overall Loss: 0.0373	 CE1: 0.0169 	 CE2: 0.0202 	 ADV: 0.0002
+Epoch #96	 DNet Overall Loss: 0.1923	 GT loss: 0.0867 	 Pred loss: 0.9119
+Epoch #97	 SSNet Overall Loss: 0.0362	 CE1: 0.0163 	 CE2: 0.0197 	 ADV: 0.0002
+Epoch #97	 DNet Overall Loss: 0.1956	 GT loss: 0.0864 	 Pred loss: 0.9434
+Epoch #98	 SSNet Overall Loss: 0.0350	 CE1: 0.0159 	 CE2: 0.0190 	 ADV: 0.0001
+Epoch #98	 DNet Overall Loss: 0.2023	 GT loss: 0.0860 	 Pred loss: 1.0046
+Epoch #99	 SSNet Overall Loss: 0.0358	 CE1: 0.0164 	 CE2: 0.0193 	 ADV: 0.0001
+Epoch #99	 DNet Overall Loss: 0.1986	 GT loss: 0.0789 	 Pred loss: 1.0346
+Epoch #100	 SSNet Overall Loss: 0.0359	 CE1: 0.0160 	 CE2: 0.0198 	 ADV: 0.0001
+Epoch #100	 DNet Overall Loss: 0.1975	 GT loss: 0.0877 	 Pred loss: 0.9490
+Epoch #101	 SSNet Overall Loss: 0.0409	 CE1: 0.0163 	 CE2: 0.0243 	 ADV: 0.0003
+Epoch #101	 DNet Overall Loss: 0.1957	 GT loss: 0.0882 	 Pred loss: 0.9290
+Epoch #101	 Val Loss: 0.32751177
+Epoch #102	 SSNet Overall Loss: 0.0349	 CE1: 0.0158 	 CE2: 0.0188 	 ADV: 0.0003
+Epoch #102	 DNet Overall Loss: 0.1914	 GT loss: 0.0761 	 Pred loss: 0.9962
+Epoch #103	 SSNet Overall Loss: 0.0346	 CE1: 0.0157 	 CE2: 0.0189 	 ADV: 0.0000
+Epoch #103	 DNet Overall Loss: 0.1918	 GT loss: 0.0844 	 Pred loss: 0.9275
+Epoch #104	 SSNet Overall Loss: 0.0357	 CE1: 0.0160 	 CE2: 0.0196 	 ADV: 0.0001
+Epoch #104	 DNet Overall Loss: 0.1918	 GT loss: 0.0792 	 Pred loss: 0.9728
+Epoch #105	 SSNet Overall Loss: 0.0353	 CE1: 0.0158 	 CE2: 0.0194 	 ADV: 0.0001
+Epoch #105	 DNet Overall Loss: 0.1892	 GT loss: 0.0833 	 Pred loss: 0.9144
+Epoch #106	 SSNet Overall Loss: 0.0347	 CE1: 0.0157 	 CE2: 0.0189 	 ADV: 0.0001
+Epoch #106	 DNet Overall Loss: 0.1905	 GT loss: 0.0812 	 Pred loss: 0.9446
+Epoch #107	 SSNet Overall Loss: 0.0348	 CE1: 0.0157 	 CE2: 0.0190 	 ADV: 0.0001
+Epoch #107	 DNet Overall Loss: 0.1883	 GT loss: 0.0819 	 Pred loss: 0.9194
+Epoch #108	 SSNet Overall Loss: 0.0354	 CE1: 0.0163 	 CE2: 0.0189 	 ADV: 0.0001
+Epoch #108	 DNet Overall Loss: 0.1905	 GT loss: 0.0822 	 Pred loss: 0.9358
+Epoch #109	 SSNet Overall Loss: 0.0348	 CE1: 0.0156 	 CE2: 0.0192 	 ADV: 0.0001
+Epoch #109	 DNet Overall Loss: 0.1876	 GT loss: 0.0812 	 Pred loss: 0.9195
+Epoch #110	 SSNet Overall Loss: 0.0365	 CE1: 0.0155 	 CE2: 0.0209 	 ADV: 0.0001
+Epoch #110	 DNet Overall Loss: 0.1914	 GT loss: 0.0835 	 Pred loss: 0.9317
+Epoch #111	 SSNet Overall Loss: 0.0339	 CE1: 0.0152 	 CE2: 0.0186 	 ADV: 0.0001
+Epoch #111	 DNet Overall Loss: 0.1882	 GT loss: 0.0807 	 Pred loss: 0.9290
+Epoch #111	 Val Loss: 0.36344354
+Epoch #112	 SSNet Overall Loss: 0.0346	 CE1: 0.0154 	 CE2: 0.0191 	 ADV: 0.0001
+Epoch #112	 DNet Overall Loss: 0.1960	 GT loss: 0.0876 	 Pred loss: 0.9363
+Epoch #113	 SSNet Overall Loss: 0.0351	 CE1: 0.0153 	 CE2: 0.0195 	 ADV: 0.0002
+Epoch #113	 DNet Overall Loss: 0.1902	 GT loss: 0.0794 	 Pred loss: 0.9576
+Epoch #114	 SSNet Overall Loss: 0.0339	 CE1: 0.0152 	 CE2: 0.0187 	 ADV: 0.0001
+Epoch #114	 DNet Overall Loss: 0.1918	 GT loss: 0.0858 	 Pred loss: 0.9159
+Epoch #115	 SSNet Overall Loss: 0.0336	 CE1: 0.0152 	 CE2: 0.0182 	 ADV: 0.0001
+Epoch #115	 DNet Overall Loss: 0.1889	 GT loss: 0.0795 	 Pred loss: 0.9457
+Epoch #116	 SSNet Overall Loss: 0.0335	 CE1: 0.0153 	 CE2: 0.0181 	 ADV: 0.0001
+Epoch #116	 DNet Overall Loss: 0.1897	 GT loss: 0.0848 	 Pred loss: 0.9061
+Epoch #117	 SSNet Overall Loss: 0.0335	 CE1: 0.0151 	 CE2: 0.0183 	 ADV: 0.0001
+Epoch #117	 DNet Overall Loss: 0.1897	 GT loss: 0.0811 	 Pred loss: 0.9384
+Epoch #118	 SSNet Overall Loss: 0.0336	 CE1: 0.0154 	 CE2: 0.0181 	 ADV: 0.0001
+Epoch #118	 DNet Overall Loss: 0.1893	 GT loss: 0.0825 	 Pred loss: 0.9226
+Epoch #119	 SSNet Overall Loss: 0.0342	 CE1: 0.0151 	 CE2: 0.0190 	 ADV: 0.0001
+Epoch #119	 DNet Overall Loss: 0.1880	 GT loss: 0.0816 	 Pred loss: 0.9186
+Epoch #120	 SSNet Overall Loss: 0.0336	 CE1: 0.0156 	 CE2: 0.0179 	 ADV: 0.0001
+Epoch #120	 DNet Overall Loss: 0.1903	 GT loss: 0.0837 	 Pred loss: 0.9213
+Epoch #121	 SSNet Overall Loss: 0.0333	 CE1: 0.0146 	 CE2: 0.0186 	 ADV: 0.0001
+Epoch #121	 DNet Overall Loss: 0.1908	 GT loss: 0.0840 	 Pred loss: 0.9223
+Epoch #121	 Val Loss: 0.34630867
+Epoch #122	 SSNet Overall Loss: 0.0396	 CE1: 0.0159 	 CE2: 0.0236 	 ADV: 0.0001
+Epoch #122	 DNet Overall Loss: 0.1933	 GT loss: 0.0854 	 Pred loss: 0.9327
+Epoch #123	 SSNet Overall Loss: 0.0317	 CE1: 0.0143 	 CE2: 0.0174 	 ADV: 0.0001
+Epoch #123	 DNet Overall Loss: 0.1952	 GT loss: 0.0870 	 Pred loss: 0.9352
+Epoch #124	 SSNet Overall Loss: 0.0326	 CE1: 0.0148 	 CE2: 0.0176 	 ADV: 0.0002
+Epoch #124	 DNet Overall Loss: 0.1949	 GT loss: 0.0847 	 Pred loss: 0.9524
+Epoch #125	 SSNet Overall Loss: 0.0327	 CE1: 0.0150 	 CE2: 0.0177 	 ADV: 0.0001
+Epoch #125	 DNet Overall Loss: 0.1952	 GT loss: 0.0838 	 Pred loss: 0.9619
+Epoch #126	 SSNet Overall Loss: 0.0333	 CE1: 0.0148 	 CE2: 0.0185 	 ADV: 0.0001
