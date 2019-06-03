@@ -9,7 +9,7 @@ import pickle
 import multiprocessing as mp
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.multiprocessing import Process, Queue
+from torch.autograd import Variable
 
 from .metrics import evaluate_segmentation
 file_path = os.path.dirname(os.path.realpath(__file__))
@@ -19,6 +19,11 @@ from utils.generic_utils import id_generator
 
 
 NUM_CLASSES = 4
+
+def make_D_label(label, label_shape, device):
+    D_label = np.ones(label_shape.shape)*label
+    D_label = Variable(torch.tensor(D_label, dtype=torch.long)).to(device)
+    return D_label
 
 class Parallel_Engine(object):
     '''

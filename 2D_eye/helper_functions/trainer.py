@@ -29,6 +29,9 @@ from models.SegNet import SegNet_Small
 INPUT_CHANNELS = 3
 NUM_CLASSES = 4
 
+
+
+
 def train(
         train_loader,
         model,
@@ -172,6 +175,7 @@ def validate(
         torch.save(model.state_dict(), os.path.join(args.save_dir, "model_val_best.pth"))
 
     return new_val_loss
+
 
 def run_training(
         train_loader,
@@ -423,3 +427,6 @@ def run_finetune(
     val_loss.append(val_loss_f)
 
     return train_loss,val_loss
+
+
+

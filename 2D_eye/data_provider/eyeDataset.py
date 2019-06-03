@@ -17,6 +17,67 @@ NUM_CLASSES = 4
 
 import torch
 
+
+def dataloader_dual(
+        args,
+        type = "train",
+):
+    '''
+    helper module to load data using the EyeSegmentData generator
+    :param args: List of args from __main__
+    :param type: specify the type of dataloader
+    '''
+
+    if args.dataset == "Fused":
+        if type.lower() == "train":
+            datafile_openeds = "%s/train" % args.openeds_root
+            datafile_calipso = "%s/train" % args.calipso_root
+        elif type.lower() == "val":
+            if os.path.isdir("%s/validation" % args.openeds_root):
+                datafile_openeds = "%s/validation" % args.openeds_root
+            else:
+                datafile_openeds = "%s/test" % args.openeds_root
+            if os.path.isdir("%s/validation" % args.calipso_root):
+                datafile_calipso = "%s/validation" % args.calipso_root
+            else:
+                datafile_calipso = "%s/test" % args.calipso_root
+        elif type.lower() == "test":
+            datafile_openeds = "%s/test" % args.openeds_root
+            datafile_calipso = "%s/test" % args.calipso_root
+    else:
+        raise ValueError("Invalid dataset ({})! ".format(args.dataset))
+
+    start_loader = time.time()
+    dataset_openeds = OpenEDSDataset(
+            root = datafile_openeds,
+            train_bool = True,
+    )
+    print("Done loading OpenEDS/%s in %d sec" % (type.lower(), time.time() - start_loader))
+    start_loader = time.time()
+    dataset_calipso = CalipsoDataset(
+            root = datafile_calipso,
+            photometric_transform = None, #ph_transforms.Compose(args.transforms),
+            train_bool = True,
+    )
+    print("Done loading Calipso/%s in %d sec" % (type.lower(), time.time() - start_loader))
+
+    dataloader_openeds = torch.utils.data.DataLoader(
+        dataset_openeds,
+        batch_size = args.batch_size,
+        shuffle = True,
+        num_workers = args.workers,
+        pin_memory = True,
+    )
+    dataloader_calipso = torch.utils.data.DataLoader(
+        dataset_calipso,
+        batch_size=args.batch_size,
+        shuffle=True,
+        num_workers=args.workers,
+        pin_memory=True,
+    )
+    return dataset_openeds, dataset_calipso, dataloader_openeds, dataloader_calipso
+
+
 def dataloader(
         args,
         type = "train",

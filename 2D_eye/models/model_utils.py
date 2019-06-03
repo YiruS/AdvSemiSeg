@@ -13,6 +13,7 @@ sys.path.append(file_path)
 sys.path.append("%s/../" % file_path)
 from helper_functions.torchsummary import summary
 
+NUM_CLASSES = 4
 
 def _create_inputs(input_or_shape):
     if isinstance(input_or_shape, torch.Tensor):
@@ -53,6 +54,51 @@ def load_display_model(args):
     try:
         if args.checkpoint:
             model.load_state_dict(torch.load(args.checkpoint))
+    except Exception as e:
+        print (e)
+        sys.exit(0)
+
+    return model
+
+def load_models(mode, device, args):
+    """
+
+    :param mode: "SS" or "Discriminator"
+    :param args:
+    :return:
+    """
+
+    if mode == "SS":
+        if args.network == "segnet_small":
+            from models.SegNet import SegNet_Small
+            model = SegNet_Small(
+                args.channels,
+                args.classes,
+                args.skip_type,
+                BR_bool=args.BR,
+                separable_conv=args.SC
+            )
+            model = model.to(device)
+
+        summary(
+            model,
+            (args.channels, args.image_size, args.image_size),
+            args
+        )
+    elif mode == "Discriminator":
+        from models.discriminator import FCDiscriminator
+        model = FCDiscriminator(
+            num_classes = NUM_CLASSES,
+        )
+    else:
+        raise ValueError("Invalid mode {}!".format(mode))
+
+    try:
+        if args.checkpoint_SS:
+            model.load_state_dict(torch.load(args.checkpoint_SS))
+        if args.checkpoint_DNet:
+            model.load_state_dict(torch.load(args.checkpoint_DNet))
+
     except Exception as e:
         print (e)
         sys.exit(0)
